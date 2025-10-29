@@ -11,19 +11,100 @@ export default function Home() {
     businessName: "",
     teamSize: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Thank you! We will contact you soon.");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Show success popup
+        setShowSuccessPopup(true);
+        // Reset form
+        setFormData({
+          fullName: "",
+          email: "",
+          contactNumber: "",
+          location: "",
+          businessName: "",
+          teamSize: "",
+        });
+        // Auto-hide popup after 5 seconds
+        setTimeout(() => {
+          setShowSuccessPopup(false);
+        }, 5000);
+      } else {
+        alert(`Error: ${data.error || 'Failed to submit form'}`);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Failed to submit form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white font-[family-name:var(--font-geist-sans)]">
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full transform animate-scale-in">
+            <div className="text-center">
+              {/* Success Icon */}
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                <svg
+                  className="h-10 w-10 text-[#00A651]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </div>
+              
+              {/* Success Message */}
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Thank You!
+              </h3>
+              <p className="text-gray-600 mb-6">
+                We will contact you soon.
+              </p>
+              
+              {/* Close Button */}
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="w-full bg-[#00A651] text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors shadow-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Container */}
       <div className="container mx-auto px-4 py-4 lg:py-6 max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-start">
@@ -115,7 +196,7 @@ export default function Home() {
                     required
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full px-3 py-2 border text-gray-500 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -132,7 +213,7 @@ export default function Home() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full px-3 py-2 border text-gray-500 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -153,7 +234,7 @@ export default function Home() {
                       required
                       value={formData.contactNumber}
                       onChange={handleChange}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-r-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
+                      className="flex-1 px-3 py-2 border text-gray-500 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
                       placeholder="9876543210"
                       pattern="[0-9]{10}"
                     />
@@ -172,7 +253,7 @@ export default function Home() {
                     required
                     value={formData.location}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full px-3 py-2 border text-gray-500 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
                     placeholder="City, State"
                   />
                 </div>
@@ -188,7 +269,7 @@ export default function Home() {
                     name="businessName"
                     value={formData.businessName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full px-3 py-2 border text-gray-500 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
                     placeholder="Company or business name"
                   />
                 </div>
@@ -203,7 +284,7 @@ export default function Home() {
                     name="teamSize"
                     value={formData.teamSize}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all bg-white text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all bg-white text-sm"
                   >
                     <option value="">Select team size</option>
                     <option value="0-3">0 to 3</option>
@@ -217,9 +298,10 @@ export default function Home() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full bg-[#00A651] text-white font-bold py-3 rounded-lg hover:bg-green-600 transition-colors shadow-lg mt-4 text-sm"
+                  disabled={isSubmitting}
+                  className="w-full bg-[#00A651] text-white font-bold py-3 rounded-lg hover:bg-green-600 transition-colors shadow-lg mt-4 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  Get a FREE Quote
+                  {isSubmitting ? 'Submitting...' : 'Get a FREE Quote'}
                 </button>
               </form>
             </div>
