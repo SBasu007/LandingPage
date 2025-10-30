@@ -13,7 +13,7 @@ export default function Home() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-
+  const phone = process.env.NEXT_PUBLIC_PHONE_NUMBER;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -171,8 +171,8 @@ export default function Home() {
             <div className="bg-gradient-to-r from-red-50 to-green-50 border-l-4 border-[#FF0000] p-3 rounded-lg">
               <p className="text-sm font-semibold text-gray-800">
                 Let&apos;s Discuss On Call at{" "}
-                <a href="tel:+918548846108" className="text-[#00A651] hover:underline">
-                  +91 8548846108
+                <a href={"tel:+91" + phone} className="text-[#00A651] hover:underline">
+                  +91 {phone}
                 </a>
               </p>
             </div>
@@ -235,7 +235,7 @@ export default function Home() {
                       value={formData.contactNumber}
                       onChange={handleChange}
                       className="flex-1 px-3 py-2 border text-gray-500 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent outline-none transition-all text-sm"
-                      placeholder="9876543210"
+                      placeholder="1234567890"
                       pattern="[0-9]{10}"
                     />
                   </div>
@@ -329,7 +329,7 @@ export default function Home() {
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/918548846108"
+        href={"https://wa.me/91" + process.env.NEXT_PUBLIC_PHONE_NUMBER}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-4 right-4 bg-[#25D366] text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform z-50"
